@@ -24,7 +24,7 @@ class Worker(multiprocessing.Process):
         self.logger = logger
         uri = create_mongodb_uri_string(cfg.user, cfg.password, cfg.host, cfg.port, cfg.authentication_db,
                                         cfg.ssl_enabled)
-        connect(cfg.database, host=uri, alias=self.alias, connect=False)
+        connect(cfg.database, host=uri, connect=False)
 
     def run(self):
         while True:
@@ -36,21 +36,21 @@ class Worker(multiprocessing.Process):
             current_progress = self.started_tasks.qsize()
             if current_progress%1000==0:
                 self.logger.info("processing person %i/%i" % (current_progress,self.no_people))
-            with switch_db(Identity, self.alias) as Identity2:
-                identities_to_store = []
-                for inner_person in self.people:
-                    if person['id']==inner_person['id']:
-                        continue
-                    match = compare_people(person,inner_person)
-                    if match>0:
-                        identity = Identity2()
-                        identity.people = [person['id'], inner_person['id']]
-                        identities_to_store.append(identity)
-                if not identities_to_store:
-                    identity = Identity2()
-                    identity.people = [person['id']]
+           
+            identities_to_store = []
+            for inner_person in self.people:
+                if person['id']==inner_person['id']:
+                    continue
+                match = compare_people(person,inner_person)
+                if match>0:
+                    identity = Identity()
+                    identity.people = [person['id'], inner_person['id']]
                     identities_to_store.append(identity)
-                Identity2.objects.insert(identities_to_store)
+            if not identities_to_store:
+                identity = Identity()
+                identity.people = [person['id']]
+                identities_to_store.append(identity)
+            Identity.objects.insert(identities_to_store)
             self.task_queue.task_done()
 
 
