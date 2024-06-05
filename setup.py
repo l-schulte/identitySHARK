@@ -15,7 +15,7 @@ setup(
     author_email='atefehkhajeh12@gmail.com',
     description='Merge different developer identities toegether',
     setup_requires=['numpy', 'pytz'],
-    install_requires=['mongoengine', 'pymongo', 'jellyfish', 'pycoshark>=1.0.21'],
+    install_requires=['mongoengine', 'pymongo', 'jellyfish<=0.8.1', 'pycoshark>=1.0.21'],
     dependency_links=['git+https://github.com/smartshark/pycoSHARK.git@1.0.21#egg=pycoshark-1.0.21'],
     url='https://github.com/smartshark/identitySHARK',
     download_url='https://github.com/smartshark/identitySHARK/zipball/master',
